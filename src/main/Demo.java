@@ -34,47 +34,46 @@ public class Demo {
         tokens.add(t2);
         tokens.add(t3);
 
-        String first1k = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.first-1k.conll06";
-        String first5k = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.first-5k.conll06";
+        Tree testTree = new Tree(tokens);
+
+        String first1k_en = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.first-1k.conll06";
+        String first5k_en = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.first-5k.conll06";
+        String complete_en = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.conll06";
+
+        String first1k_de = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\german\\train\\tiger-2.2.train.only-projective.first-1k.conll06";
+        String first5k_de = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\german\\train\\tiger-2.2.train.only-projective.first-5k.conll06";
+        String complete_de = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\german\\train\\tiger-2.2.train.only-projective.conll06";
+
         Corpus training = new Corpus();
-        training.readFile(first5k);
+        training.readFile(complete_en);
 
-        Corpus test = new Corpus();
-        test.readFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\dev\\wsj_dev.conll06_pred.pred");
-        test.readGold("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\dev\\wsj_dev.conll06_gold.gold");
-        //corpus.getTrees().forEach(tree -> System.out.println(tree));
-        //System.out.println(corpus.getTrees().get(0));
+        Corpus test_en = new Corpus();
+        test_en.readFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\dev\\wsj_dev.conll06_blind.blind");
+        test_en.readGold("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\dev\\wsj_dev.conll06_gold.gold");
 
-        // corpus.writeFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\results\\wsj_dev_out.txt");
+        Corpus test_de = new Corpus();
+        test_de.readFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\german\\dev\\tiger-2.2.dev.conll06.blind");
+        test_de.readGold("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\german\\dev\\tiger-2.2.dev.conll06.gold");
 
 
         System.out.println("training");
         MulticlassPerceptron model = new MulticlassPerceptron();
-        model.train(training);
+        model.train(training, 10);
         Parser parser = new TransitionParser(model);
 
 
 
         System.out.println("\ntest\n");
-       /* Tree tree = new Tree(tokens);
-        Tree first = training.getTrees().get(0);
-        first.clear();
-        Oracle oracle = new Oracle();
-        List<String> transitions = oracle.parse(tree);
-        tree.clear();
 
-        System.out.println("oracle\n");
-        transitions.forEach(t -> System.out.println(t));
+        test_en.getTrees().forEach(tree -> tree.clear());
+        test_en.getTrees().forEach(tree -> parser.parse(tree));
 
-        List<String> predictedTransitions = parser.parse(tree);
-        System.out.println("\npredicted\n");
-        predictedTransitions.forEach(t -> System.out.println(t)); */
+        //parser.parse(testTree);
 
-        test.getTrees().forEach(tree -> tree.clear());
-        test.getTrees().forEach(tree -> parser.parse(tree));
+        test_de.writeFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\results\\german\\wsj_dev_out.txt");
 
-        double uas = Evaluation.microUAS(test);
-        double las = Evaluation.microLAS(test);
+        double uas = Evaluation.microUAS(test_en);
+        double las = Evaluation.microLAS(test_en);
         System.out.println("UAS: " + uas);
         System.out.println("LAS: " + las);
 

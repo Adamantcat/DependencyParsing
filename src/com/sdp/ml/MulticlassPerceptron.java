@@ -1,5 +1,6 @@
 package com.sdp.ml;
 
+import com.sdp.evaluation.Evaluation;
 import com.sdp.parsing.Oracle;
 import com.sdp.parsing.Parser;
 import com.sdp.parsing.TransitionParser;
@@ -47,14 +48,13 @@ public class MulticlassPerceptron {
         return orderedScores.get(0).getKey();
     }
 
-    public void predictTree(Tree tree) {
+    private void predictTree(Tree tree) {
         //System.out.println("LOGGING: predictTree");
-        tree.getTokens().forEach(t -> System.out.print(t.getForm() + " "));
-        System.out.println();
+        tree.clear();
         List<String> features;
         oracle.init(tree);
         while (!oracle.isTerminal()) {
-            features = FeatureExtraction.extractFeatures(oracle);
+            features = FeatureExtraction.extractFeatures(oracle, tree);
             String predicted = predictTransition(features);
             String correctTransition = oracle.nextTransition(tree); //return which transition should be done and do the transition
             if (!predicted.equals(correctTransition)) {
@@ -65,14 +65,15 @@ public class MulticlassPerceptron {
         }
     }
 
-    public void train (Corpus corpus) {
-        for(Tree tree : corpus.getTrees()) {
-            tree.clear();
-            predictTree(tree);
+    public void train (Corpus corpus, int iterations) {
+        for (int i = 1; i <= iterations; i++) {
+            System.out.println("Iteration " + i);
+            List<Tree> trees = corpus.getTrees();
+            Collections.shuffle(trees);
+            for (Tree tree : trees) {
+                predictTree(tree);
+            }
         }
     }
-
-
-
 
 }

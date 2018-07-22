@@ -12,9 +12,6 @@ public class Tree {
 
     private List<Token> tokens;
 
-    public Tree() {
-        this.tokens = new ArrayList<Token>();
-    }
     public Tree (List<Token> tokens) {
         this.tokens = tokens;
     }

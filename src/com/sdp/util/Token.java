@@ -1,30 +1,32 @@
 package com.sdp.util;
 
+
 public class Token {
 
-   private int index;
-   private String form;
-   private String lemma;
-   private String pos;
-   private String xpos;
-   private String morph;
-   private String rel;
-   private int goldIndex;
-   private int headIndex;
-   private String goldRel;
+    private int index;
+    private String form;
+    private String lemma;
+    private String pos;
+    private String xpos;
+    private String morph;
+    private String rel;
+    private int goldIndex;
+    private int headIndex;
+    private String goldRel;
 
-   public Token() {
-       this.index = -1;
-       this.form = "";
-       this.lemma = "";
-       this.pos = "";
-       this.xpos = "";
-       this.morph = "";
-       this.rel = "";
-       this.goldIndex = -1;
-       this.headIndex = -1;
-       this.goldRel = "_";
-   }
+    public Token() {
+        this.index = -1;
+        this.form = "";
+        this.lemma = "";
+        this.pos = "";
+        this.xpos = "";
+        this.morph = "";
+        this.rel = "";
+        this.goldIndex = -1;
+        this.headIndex = -1;
+        this.goldRel = "_";
+    }
+
     public Token(int index, String form, String pos, int headIndex) {
         this.index = index;
         this.form = form;
@@ -108,7 +110,9 @@ public class Token {
         this.rel = rel;
     }
 
-    public void setGoldIndex(int goldIndex) {this.goldIndex = goldIndex;}
+    public void setGoldIndex(int goldIndex) {
+        this.goldIndex = goldIndex;
+    }
 
     public int getGoldIndex() {
         return goldIndex;
@@ -171,4 +175,6 @@ public class Token {
         result = 31 * result + goldRel.hashCode();
         return result;
     }
+
 }
+

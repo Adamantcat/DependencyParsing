@@ -124,6 +124,8 @@ public class Corpus {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (Tree tree : trees) {
                 for(Token token : tree.getTokens()) {
+                    if(token.isRoot()) //dont write artificial root token to file
+                        continue;
                     String res = token.getIndex() + "\t" + token.getForm() + "\t" + token.getLemma() + "\t"
                             + token.getPos() + "\t" + token.getXpos() + "\t" + token.getMorph() + "\t"
                             + token.getHeadIndex() + "\t" + token.getRel() + "\t_\t_\n";

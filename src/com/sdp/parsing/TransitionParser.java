@@ -2,6 +2,7 @@ package com.sdp.parsing;
 
 import com.sdp.ml.FeatureExtraction;
 import com.sdp.ml.MulticlassPerceptron;
+import com.sdp.util.Token;
 import com.sdp.util.Tree;
 
 import java.util.*;
@@ -24,8 +25,7 @@ public class TransitionParser extends Parser {
         Map<String, Double> scores;
         init(tree);
         while (!isTerminal()) {
-
-            List<String> features = FeatureExtraction.extractFeatures(this);
+            List<String> features = FeatureExtraction.extractFeatures(this, tree);
             scores = model.getScores(features);
 
             List<Map.Entry<String, Double>> orderedScores = new ArrayList(scores.entrySet());
@@ -57,6 +57,12 @@ public class TransitionParser extends Parser {
             }
             transitions.add(suggestedTransition);
         }
+        //attach to left neighbour, if token has no head
+      /*  for(Token token : tree.getTokens()) {
+            if(!token.isRoot() && (token.getHeadIndex() == 0))
+                token.setHeadIndex(token.getIndex()-1);
+        }
+        */
         return transitions;
     }
 }
