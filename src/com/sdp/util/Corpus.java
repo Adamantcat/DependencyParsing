@@ -2,7 +2,9 @@ package com.sdp.util;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Julia on 26.04.2018.
@@ -10,23 +12,28 @@ import java.util.List;
 public class Corpus {
 
     private List<Tree> trees;
+    private Set<String> tagset;
+
+
+    public Corpus() {
+        this.trees = new ArrayList<Tree>();
+        this.tagset = new HashSet<String>();
+        tagset.add("_"); //add default value
+    }
+
+    public Set<String> getTagset() {
+        return tagset;
+    }
+
+    public void setTagset(Set<String> tagset) {
+        this.tagset = tagset;
+    }
 
     public List<Tree> getTrees() {
-
         return trees;
     }
 
     public void setTrees(List<Tree> trees) {
-
-        this.trees = trees;
-    }
-
-    public Corpus() {
-
-        this.trees = new ArrayList<Tree>();
-    }
-
-    public Corpus(List<Tree> trees) {
 
         this.trees = trees;
     }
@@ -65,7 +72,9 @@ public class Corpus {
                     else
                         token.setGoldIndex(-1);
 
-                    token.setRel(fields[7].trim());
+                    String rel = fields[7].trim();
+                    token.setGoldRel(rel);
+                    tagset.add(rel);
                     tokens.add(token);
                 }
             }

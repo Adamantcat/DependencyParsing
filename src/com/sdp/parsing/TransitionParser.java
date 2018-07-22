@@ -57,12 +57,9 @@ public class TransitionParser extends Parser {
             }
             transitions.add(suggestedTransition);
         }
-        //attach to left neighbour, if token has no head
-      /*  for(Token token : tree.getTokens()) {
-            if(!token.isRoot() && (token.getHeadIndex() == 0))
-                token.setHeadIndex(token.getIndex()-1);
-        }
-        */
+
+        model.predictLabels(tree);
+
         return transitions;
     }
 }

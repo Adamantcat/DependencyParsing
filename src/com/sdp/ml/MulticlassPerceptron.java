@@ -5,6 +5,7 @@ import com.sdp.parsing.Oracle;
 import com.sdp.parsing.Parser;
 import com.sdp.parsing.TransitionParser;
 import com.sdp.util.Corpus;
+import com.sdp.util.Token;
 import com.sdp.util.Tree;
 
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.*;
 public class MulticlassPerceptron {
 
     private Map<String, Perceptron> perceptrons;
+    private Map<String, Perceptron> labelPerceptrons;
     private Oracle oracle;
 
     public MulticlassPerceptron() {
@@ -24,6 +26,20 @@ public class MulticlassPerceptron {
 
         for (String transition : Parser.transitions) {
             perceptrons.put(transition, new Perceptron());
+        }
+    }
+
+    public MulticlassPerceptron(Set<String> tagset) {
+
+        this.perceptrons = new HashMap<String, Perceptron>();
+        this.labelPerceptrons = new HashMap<String, Perceptron>();
+        this.oracle = new Oracle();
+
+        for (String transition : Parser.transitions) {
+            perceptrons.put(transition, new Perceptron());
+        }
+        for (String label : tagset) {
+            labelPerceptrons.put(label, new Perceptron());
         }
     }
 
@@ -38,6 +54,16 @@ public class MulticlassPerceptron {
         }
 
         return scores;
+    }
+
+    public String getLabel(List<String> labelFeatures) {
+        double max = 0;
+        String predicted = "_";
+        for (String label : labelPerceptrons.keySet()) {
+            if (labelPerceptrons.get(label).getScore(labelFeatures) > max)
+                predicted = label;
+        }
+        return predicted;
     }
 
     private String predictTransition(List<String> features) {
@@ -65,13 +91,35 @@ public class MulticlassPerceptron {
         }
     }
 
-    public void train (Corpus corpus, int iterations) {
+    private void predictLabel(Token token, Tree tree) {
+        List<String> labelFeatures = FeatureExtraction.extractLabelFeatures(token, tree);
+        String predicted = getLabel(labelFeatures);
+
+        token.setRel(predicted);
+
+        if (!predicted.equals(token.getGoldRel())) {
+            labelPerceptrons.get(predicted).decrease(labelFeatures);
+            labelPerceptrons.get(token.getGoldRel()).increase(labelFeatures);
+        }
+
+    }
+
+    public void predictLabels(Tree tree) {
+        for (Token token : tree.getTokens()) {
+            predictLabel(token, tree);
+        }
+    }
+
+    public void train(Corpus corpus, int iterations) {
         for (int i = 1; i <= iterations; i++) {
             System.out.println("Iteration " + i);
             List<Tree> trees = corpus.getTrees();
             Collections.shuffle(trees);
             for (Tree tree : trees) {
                 predictTree(tree);
+                if (labelPerceptrons != null) {
+                    predictLabels(tree);
+                }
             }
         }
     }

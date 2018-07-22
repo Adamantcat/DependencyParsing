@@ -156,4 +156,25 @@ public class FeatureExtraction {
 
         return features;
     }
+
+    public static List<String> extractLabelFeatures(Token dependent, Tree tree) {
+        List<String> features = new ArrayList<String>();
+
+        Token head = tree.getByIndex(dependent.getHeadIndex());
+        if(head != null) {
+            features.add("h_form=" + head.getForm());
+            features.add("h_pos=" + head.getPos());
+        }
+        else {
+            features.add("h_form=null");
+            features.add("h_pos=null");
+        }
+
+        features.add("d_form=" + dependent.getForm());
+        features.add("d_pos=" + dependent.getPos());
+
+        Set<Token> children = tree.getDependents(dependent);
+
+        return features;
+    }
 }

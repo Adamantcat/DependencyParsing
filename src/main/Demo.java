@@ -18,24 +18,6 @@ import java.util.List;
 public class Demo {
     public static void main(String[] args) {
 
-        //Test tree
-        Token t0 = new Token(0, "ROOT", "P_ROOT", -1);
-        t0.setGoldIndex(-1);
-        Token t1 = new Token(1, "John", "NN", -1);
-        t1.setGoldIndex(2);
-        Token t2 = new Token(2, "saw", "V", -1);
-        t2.setGoldIndex(0);
-        Token t3 = new Token(3, "Mary", "NN", -1);
-        t3.setGoldIndex(2);
-
-        List<Token> tokens = new ArrayList<Token>();
-        tokens.add(t0);
-        tokens.add(t1);
-        tokens.add(t2);
-        tokens.add(t3);
-
-        Tree testTree = new Tree(tokens);
-
         String first1k_en = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.first-1k.conll06";
         String first5k_en = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.first-5k.conll06";
         String complete_en = "C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\english\\train\\wsj_train.only-projective.conll06";
@@ -57,11 +39,9 @@ public class Demo {
 
 
         System.out.println("training");
-        MulticlassPerceptron model = new MulticlassPerceptron();
-        model.train(training, 10);
+        MulticlassPerceptron model = new MulticlassPerceptron(training.getTagset());
+        model.train(training, 5);
         Parser parser = new TransitionParser(model);
-
-
 
         System.out.println("\ntest\n");
 
@@ -70,7 +50,8 @@ public class Demo {
 
         //parser.parse(testTree);
 
-        test_de.writeFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\results\\german\\wsj_dev_out.txt");
+        //test_de.writeFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\results\\german\\tiger-2.2_dev_out.txt");
+        test_en.writeFile("C:\\Users\\Julia\\Documents\\Master\\SS18\\DependencyParsing\\results\\english\\wsj_dev_out.txt");
 
         double uas = Evaluation.microUAS(test_en);
         double las = Evaluation.microLAS(test_en);

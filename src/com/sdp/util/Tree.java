@@ -60,12 +60,15 @@ public class Tree {
     }
 
     public Token getByIndex(int index) {
-       return tokens.get(index);
+        if(index == -1)
+            return null;
+        return tokens.get(index);
     }
 
     public void clear() {
         for(Token token : tokens) {
             token.setHeadIndex(-1);
+            token.setRel("_");
         }
     }
 
