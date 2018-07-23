@@ -8,12 +8,15 @@ import com.sdp.util.Corpus;
 import com.sdp.util.Token;
 import com.sdp.util.Tree;
 
+import java.io.*;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by Julia on 05.07.2018.
  */
-public class MulticlassPerceptron {
+public class MulticlassPerceptron implements Serializable{
 
     private Map<String, Perceptron> perceptrons;
     private Map<String, Perceptron> labelPerceptrons;
@@ -56,7 +59,7 @@ public class MulticlassPerceptron {
         return scores;
     }
 
-    public String getLabel(List<String> labelFeatures) {
+    private String getLabel(List<String> labelFeatures) {
         double max = 0;
         String predicted = "_";
         for (String label : labelPerceptrons.keySet()) {
@@ -122,6 +125,25 @@ public class MulticlassPerceptron {
                 }
             }
         }
+    }
+
+    public void save(String filename) throws IOException{
+        File output = new File(filename); //output file
+        output.getParentFile().mkdirs();
+        ObjectOutputStream oos = new ObjectOutputStream(
+                new GZIPOutputStream(new FileOutputStream(output)));
+        oos.writeObject(this);
+        oos.close();
+        System.out.println("saved model to " + filename);
+    }
+
+    public MulticlassPerceptron read(String filename) throws IOException, ClassNotFoundException{
+        File input = new File(filename);
+        ObjectInputStream ois = new ObjectInputStream(new
+                GZIPInputStream(new FileInputStream(input)));
+        MulticlassPerceptron model = (MulticlassPerceptron) ois.readObject();
+        ois.close();
+        return model;
     }
 
 }

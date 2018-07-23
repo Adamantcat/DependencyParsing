@@ -164,6 +164,18 @@ public class FeatureExtraction {
         if(head != null) {
             features.add("h_form=" + head.getForm());
             features.add("h_pos=" + head.getPos());
+            if(head.getIndex() > dependent.getIndex())
+                features.add("h_position=right");
+            else
+                features.add("h_position=left");
+
+            int distance = Math.abs(head.getIndex() - dependent.getIndex());
+            if(distance == 1)
+                features.add("distance=1");
+            else if(distance > 1 && distance <= 4)
+                features.add("distance=range_2-4");
+            else
+                features.add("distance=gt5");
         }
         else {
             features.add("h_form=null");
@@ -173,7 +185,7 @@ public class FeatureExtraction {
         features.add("d_form=" + dependent.getForm());
         features.add("d_pos=" + dependent.getPos());
 
-        Set<Token> children = tree.getDependents(dependent);
+        //Set<Token> children = tree.getDependents(dependent);
 
         return features;
     }

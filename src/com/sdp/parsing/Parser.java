@@ -3,6 +3,7 @@ package com.sdp.parsing;
 import com.sdp.util.Token;
 import com.sdp.util.Tree;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Julia on 07.06.2018.
  */
-public abstract class Parser {
+public abstract class Parser implements Serializable{
     protected Stack<Token> stack;
     protected Deque<Token> buffer;
     public static final String leftArc = "leftArc";

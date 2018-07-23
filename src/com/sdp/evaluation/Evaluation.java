@@ -59,7 +59,6 @@ public class Evaluation {
             }
             denominator += (tree.getTokens().size() - 1);
         }
-        System.out.println(nominator + "/" + denominator);
         return (double) (nominator/denominator);
     }
 
@@ -75,7 +74,6 @@ public class Evaluation {
             }
             denominator += (tree.getTokens().size() - 1);
         }
-        System.out.println(nominator + "/" + denominator);
         return (double) (nominator/denominator);
     }
 }

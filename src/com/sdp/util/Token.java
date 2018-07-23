@@ -1,7 +1,9 @@
 package com.sdp.util;
 
 
-public class Token {
+import java.io.Serializable;
+
+public class Token implements Serializable{
 
     private int index;
     private String form;

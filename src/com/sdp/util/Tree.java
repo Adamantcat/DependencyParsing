@@ -1,5 +1,6 @@
 package com.sdp.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Set;
 /**
  * Created by Julia on 26.04.2018.
  */
-public class Tree {
+public class Tree implements Serializable{
 
     private List<Token> tokens;
 
