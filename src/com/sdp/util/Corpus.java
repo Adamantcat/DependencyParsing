@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Julia on 26.04.2018.
+ * Course: Statistical Dependency Parsing, SS 2018
+ * Author: Julia Koch
+ * Class Description: Class to represent a corpus dependency trees in Conll06-format
  */
 public class Corpus {
 
-    private List<Tree> trees;
-    private Set<String> tagset;
-
+    private List<Tree> trees; //the trees in this corpus
+    private Set<String> tagset; //set of relations in this corpus (NMOD, SUBJ, OBJ, etc.)
 
     public Corpus() {
         this.trees = new ArrayList<Tree>();
@@ -34,10 +35,11 @@ public class Corpus {
     }
 
     public void setTrees(List<Tree> trees) {
-
         this.trees = trees;
     }
 
+    //read corpus from conll06 file
+    //works for training file with gold trees and for unannotated test set
     public void readFile(String filename) {
         try {
             BufferedReader src = new BufferedReader(new FileReader(new File(filename)));
@@ -45,16 +47,17 @@ public class Corpus {
             trees = new ArrayList<Tree>();
             String line;
             List<Token> tokens = new ArrayList<Token>();
-            Token root = new Token(0, "ROOT", "P_ROOT", -1);
+            Token root = new Token(0, "ROOT", "P_ROOT", -1); //add root token for first tree
             tokens.add(root);
 
             while ((line = src.readLine()) != null) {
                 Tree tree;
+                //blank line separates trees
                 if (line.equals("")) {
-                    tree = new Tree(tokens);
+                    tree = new Tree(tokens); //build tree from current list of tokens
                     trees.add(tree);
-                    tokens = new ArrayList<Token>();
-                    root = new Token(0, "ROOT", "P_ROOT", -1);
+                    tokens = new ArrayList<Token>(); //reset list of tokens
+                    root = new Token(0, "ROOT", "P_ROOT", -1); //root token for next tree
                     tokens.add(root);
                 } else {
                     String[] fields = line.split("\t");
@@ -67,6 +70,7 @@ public class Corpus {
                     token.setXpos(fields[4].trim());
                     token.setMorph(fields[5].trim());
 
+                    //if file contains gold heads
                     if (!fields[6].equals("_"))
                         token.setGoldIndex(Integer.parseInt(fields[6].trim()));
                     else
@@ -74,7 +78,7 @@ public class Corpus {
 
                     String rel = fields[7].trim();
                     token.setGoldRel(rel);
-                    tagset.add(rel);
+                    tagset.add(rel); //add relation to tagset
                     tokens.add(token);
                 }
             }
@@ -85,55 +89,53 @@ public class Corpus {
         }
     }
 
+    //read file containing gold trees in conll06 format
+    //corresponding unannotated file needs to be read before
     public void readGold(String filename) {
-        try{
+        try {
             BufferedReader src = new BufferedReader(new FileReader(new File(filename)));
-            int i = 0;
-            int j = 1;
+            int i = 0; //ith three in file is also at position i in list of trees of this corpus
+            int j = 1; //index of token in tree, start at 1, since root is not in file
             String line;
             while (((line = src.readLine()) != null)) {
                 Tree tree = trees.get(i);
                 List<Token> tokens = tree.getTokens();
 
-                if(line.equals("")) {
+                if (line.equals("")) {
                     tree.setTokens(tokens);
-                    trees.set(i, tree);
+                    trees.set(i, tree); //put updated tree back to list
                     i++;
                     j = 1;
-                }
-                else {
-                   String[] fields = line.split("\t");
-                   Token token = tokens.get(j);
-                   token.setGoldRel(fields[7].trim());
+                } else {
+                    String[] fields = line.split("\t");
+                    Token token = tokens.get(j);
+                    token.setGoldRel(fields[7].trim());
 
                     if (!fields[6].equals("_")) {
                         token.setGoldIndex(Integer.parseInt(fields[6].trim()));
-                       // System.out.println(j + " " + token);
-                       //System.out.println("HEAD: " + fields[6] + " " + token);
                         tokens.set(j, token);
                         j++;
-                    }
-                    else
+                    } else
                         trees.get(i).getTokens().get(j).setHeadIndex(-1);
                 }
             }
-
             src.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    //write corpus to file in conll06-format
     public void writeFile(String filename) {
         try {
             File file = new File(filename);
-            file.getParentFile().mkdirs();
+            file.getParentFile().mkdirs(); //create necessary sub-directories
             file.createNewFile();// if file already exists will do nothing
             file.setWritable(true);
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (Tree tree : trees) {
-                for(Token token : tree.getTokens()) {
-                    if(token.isRoot()) //dont write artificial root token to file
+                for (Token token : tree.getTokens()) {
+                    if (token.isRoot()) //don't write artificial root token to file
                         continue;
                     String res = token.getIndex() + "\t" + token.getForm() + "\t" + token.getLemma() + "\t"
                             + token.getPos() + "\t" + token.getXpos() + "\t" + token.getMorph() + "\t"
@@ -144,7 +146,7 @@ public class Corpus {
             }
             System.out.println("saved to file " + filename);
             out.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

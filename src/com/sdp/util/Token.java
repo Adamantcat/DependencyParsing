@@ -1,8 +1,12 @@
 package com.sdp.util;
 
-
 import java.io.Serializable;
 
+/**
+ * Course: Statistical Dependency Parsing, SS 2018
+ * Author: Julia Koch
+ * Class Description: Class to represent a single Token in Conll06-format
+ */
 public class Token implements Serializable{
 
     private int index;
@@ -16,6 +20,7 @@ public class Token implements Serializable{
     private int headIndex;
     private String goldRel;
 
+    //initialize new token with default values
     public Token() {
         this.index = -1;
         this.form = "";
@@ -29,6 +34,7 @@ public class Token implements Serializable{
         this.goldRel = "_";
     }
 
+    //initialize new token with most important fields, default values for all other variables
     public Token(int index, String form, String pos, int headIndex) {
         this.index = index;
         this.form = form;
@@ -44,6 +50,7 @@ public class Token implements Serializable{
         this.goldRel = "_";
     }
 
+    //returns true, if this token is an artificial Root node
     public boolean isRoot() {
         return (index == 0 && form.equals("ROOT"));
     }

@@ -1,19 +1,22 @@
 package com.sdp.util;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Julia on 26.04.2018.
+ * Course: Statistical Dependency Parsing, SS 2018
+ * Author: Julia Koch
+ * Class Description: Class to represent a dependency tree in Conll06-format.
+ * A tree is a List of Tokens
  */
-public class Tree implements Serializable{
+public class Tree implements Serializable {
 
-    private List<Token> tokens;
+    private List<Token> tokens; //the tokens of this tree
 
-    public Tree (List<Token> tokens) {
+    //Constructor
+    public Tree(List<Token> tokens) {
         this.tokens = tokens;
     }
 
@@ -31,7 +34,6 @@ public class Tree implements Serializable{
         if (o == null || getClass() != o.getClass()) return false;
 
         Tree tree = (Tree) o;
-
         return tokens.equals(tree.tokens);
     }
 
@@ -40,34 +42,36 @@ public class Tree implements Serializable{
         return tokens.hashCode();
     }
 
-    //get predicted dependents
+    //get predicted dependents of a token
     public Set<Token> getDependents(Token token) {
         Set<Token> dependents = new HashSet<Token>();
         for (Token t : tokens) {
-            if(t.getHeadIndex() == (token.getIndex()))
+            if (t.getHeadIndex() == (token.getIndex()))
                 dependents.add(t);
         }
         return dependents;
     }
 
-    //gold dependents
+    //get gold dependents of a token
     public Set<Token> getAllChildren(Token token) {
         Set<Token> children = new HashSet<Token>();
         for (Token t : tokens) {
-            if(t.getGoldIndex() == (token.getIndex()))
+            if (t.getGoldIndex() == (token.getIndex()))
                 children.add(t);
         }
         return children;
     }
 
+    //return token with a given index
     public Token getByIndex(int index) {
-        if(index == -1)
+        if (index == -1)
             return null;
         return tokens.get(index);
     }
 
+    //reset predicted heads and relations
     public void clear() {
-        for(Token token : tokens) {
+        for (Token token : tokens) {
             token.setHeadIndex(-1);
             token.setRel("_");
         }
@@ -75,7 +79,7 @@ public class Tree implements Serializable{
 
     public String toString() {
         String s = "Tree = [";
-        for(Token token : tokens) {
+        for (Token token : tokens) {
             s += token.toString() + "\n";
         }
         return s + "]";
